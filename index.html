@@ -1,11 +1,391 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta name="theme-color" content="#f5f5ef">
+    <title>Rencana Hari Ini</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #20231f;
+            --muted: #777b71;
+            --paper: #f5f5ef;
+            --line: #dedfd6;
+            --accent: #d9f36a;
+            --accent-dark: #343d1b;
+            --white: #fff;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            color: var(--ink);
+            background-color: var(--paper);
+            background-image: radial-gradient(#d9dbd0 0.7px, transparent 0.7px);
+            background-size: 18px 18px;
+            font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+        }
+
+        button, input { font: inherit; }
+
+        .page {
+            width: min(100% - 40px, 760px);
+            margin: 0 auto;
+            padding: 54px 0 72px;
+        }
+
+        .topline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .brand { color: var(--ink); }
+        .brand-mark { color: #71822d; margin-right: 7px; }
+
+        header { padding: 55px 0 34px; }
+
+        .eyebrow {
+            margin: 0 0 10px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        h1 {
+            margin: 0;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(42px, 8vw, 66px);
+            font-weight: 400;
+            line-height: 1.02;
+        }
+
+        .intro {
+            max-width: 420px;
+            margin: 15px 0 0;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .task-form {
+            display: flex;
+            gap: 10px;
+            padding: 9px;
+            background: var(--white);
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            box-shadow: 0 5px 18px #343b1b0a;
+        }
+
+        .task-form input {
+            width: 100%;
+            min-width: 0;
+            padding: 11px 12px;
+            border: 0;
+            outline: 0;
+            color: var(--ink);
+            background: transparent;
+        }
+
+        .task-form input::placeholder { color: #999c92; }
+
+        .add-button {
+            flex: 0 0 auto;
+            padding: 0 18px;
+            border: 0;
+            border-radius: 4px;
+            color: var(--accent-dark);
+            background: var(--accent);
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 150ms ease, transform 150ms ease;
+        }
+
+        .add-button:hover { background: #cde95a; }
+        .add-button:active { transform: scale(0.97); }
+
+        .list-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-top: 37px;
+            padding-bottom: 13px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .list-heading h2 {
+            margin: 0;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 21px;
+            font-weight: 400;
+        }
+
+        .task-count { color: var(--muted); font-size: 12px; }
+
+        .filters { display: flex; gap: 4px; }
+
+        .filter-button {
+            padding: 7px 10px;
+            border: 0;
+            border-radius: 4px;
+            color: var(--muted);
+            background: transparent;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .filter-button[aria-pressed="true"] {
+            color: var(--ink);
+            background: #e8e9df;
+        }
+
+        .task-list { margin: 0; padding: 0; list-style: none; }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            min-height: 61px;
+            border-bottom: 1px solid var(--line);
+            animation: appear 180ms ease-out both;
+        }
+
+        .task-toggle {
+            display: grid;
+            flex: 0 0 21px;
+            width: 21px;
+            height: 21px;
+            place-items: center;
+            padding: 0;
+            border: 1px solid #b8bbae;
+            border-radius: 50%;
+            color: var(--accent-dark);
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .task-toggle[aria-pressed="true"] {
+            border-color: var(--accent);
+            background: var(--accent);
+        }
+
+        .task-text { flex: 1; overflow-wrap: anywhere; font-size: 14px; }
+        .task-item.is-done .task-text { color: #92958b; text-decoration: line-through; }
+
+        .delete-button {
+            width: 34px;
+            height: 34px;
+            border: 0;
+            border-radius: 4px;
+            color: var(--muted);
+            background: transparent;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .delete-button:hover { color: #9c3930; background: #f0e8e4; }
+
+        .empty-state {
+            padding: 32px 12px;
+            color: var(--muted);
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 17px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .clear-button {
+            padding: 0;
+            border: 0;
+            color: var(--muted);
+            background: none;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            cursor: pointer;
+        }
+
+        .clear-button:hover { color: var(--ink); }
+
+        @keyframes appear {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 520px) {
+            .page { width: min(100% - 28px, 760px); padding-top: 28px; }
+            header { padding: 43px 0 28px; }
+            .list-heading { align-items: flex-start; flex-direction: column; gap: 8px; }
+            .filters { margin-left: -8px; }
+            .footer { align-items: flex-start; flex-direction: column; }
+            .add-button { padding: 0 13px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+        }
+    </style>
 </head>
 <body>
-    
+    <main class="page">
+        <div class="topline">
+            <div class="brand"><span class="brand-mark" aria-hidden="true">●</span>Ruang Kecil</div>
+            <div id="today"></div>
+        </div>
+
+        <header>
+            <p class="eyebrow">Satu langkah pada satu waktu</p>
+            <h1>Rencana<br>hari ini.</h1>
+            <p class="intro">Tulis yang ingin kamu selesaikan. Tidak harus semuanya, yang penting mulai.</p>
+        </header>
+
+        <form class="task-form" id="task-form">
+            <input id="task-input" type="text" maxlength="120" placeholder="Apa yang ingin kamu kerjakan?" aria-label="Tugas baru" autocomplete="off" required>
+            <button class="add-button" type="submit">Tambah <span aria-hidden="true">+</span></button>
+        </form>
+
+        <section aria-labelledby="list-title">
+            <div class="list-heading">
+                <h2 id="list-title">Daftar tugas <span class="task-count" id="task-count"></span></h2>
+                <nav class="filters" aria-label="Filter tugas">
+                    <button class="filter-button" type="button" data-filter="all" aria-pressed="true">Semua</button>
+                    <button class="filter-button" type="button" data-filter="active" aria-pressed="false">Belum selesai</button>
+                    <button class="filter-button" type="button" data-filter="done" aria-pressed="false">Selesai</button>
+                </nav>
+            </div>
+            <ul class="task-list" id="task-list" aria-live="polite"></ul>
+            <div class="footer">
+                <span id="remaining"></span>
+                <button class="clear-button" id="clear-completed" type="button">Hapus yang selesai</button>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const storageKey = "ruang-kecil-tasks";
+        const form = document.querySelector("#task-form");
+        const input = document.querySelector("#task-input");
+        const list = document.querySelector("#task-list");
+        const count = document.querySelector("#task-count");
+        const remaining = document.querySelector("#remaining");
+        const filters = document.querySelector(".filters");
+        let currentFilter = "all";
+        let tasks = loadTasks();
+
+        function loadTasks() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(storageKey) || "[]");
+                return Array.isArray(saved) ? saved.filter(task => task && typeof task.text === "string" && typeof task.done === "boolean") : [];
+            } catch {
+                return [];
+            }
+        }
+
+        function saveTasks() {
+            localStorage.setItem(storageKey, JSON.stringify(tasks));
+        }
+
+        function render() {
+            const visibleTasks = tasks.filter(task => currentFilter === "all" || (currentFilter === "done" ? task.done : !task.done));
+            const unfinished = tasks.filter(task => !task.done).length;
+            list.replaceChildren();
+            count.textContent = `(${tasks.length})`;
+            remaining.textContent = unfinished === 0 ? "Semua tugas selesai. Bagus!" : `${unfinished} tugas tersisa`;
+
+            if (visibleTasks.length === 0) {
+                const empty = document.createElement("li");
+                empty.className = "empty-state";
+                empty.textContent = tasks.length === 0 ? "Belum ada tugas. Tambahkan satu untuk memulai." : "Tidak ada tugas di sini.";
+                list.append(empty);
+                return;
+            }
+
+            visibleTasks.forEach(task => {
+                const item = document.createElement("li");
+                item.className = `task-item${task.done ? " is-done" : ""}`;
+
+                const toggle = document.createElement("button");
+                toggle.className = "task-toggle";
+                toggle.type = "button";
+                toggle.setAttribute("aria-label", task.done ? `Tandai ${task.text} belum selesai` : `Tandai ${task.text} selesai`);
+                toggle.setAttribute("aria-pressed", String(task.done));
+                toggle.textContent = task.done ? "✓" : "";
+                toggle.addEventListener("click", () => {
+                    task.done = !task.done;
+                    saveTasks();
+                    render();
+                });
+
+                const text = document.createElement("span");
+                text.className = "task-text";
+                text.textContent = task.text;
+
+                const remove = document.createElement("button");
+                remove.className = "delete-button";
+                remove.type = "button";
+                remove.setAttribute("aria-label", `Hapus ${task.text}`);
+                remove.textContent = "×";
+                remove.addEventListener("click", () => {
+                    tasks = tasks.filter(entry => entry.id !== task.id);
+                    saveTasks();
+                    render();
+                });
+
+                item.append(toggle, text, remove);
+                list.append(item);
+            });
+        }
+
+        form.addEventListener("submit", event => {
+            event.preventDefault();
+            const text = input.value.trim();
+            if (!text) return;
+            tasks.unshift({ id: crypto.randomUUID(), text, done: false });
+            saveTasks();
+            input.value = "";
+            render();
+            input.focus();
+        });
+
+        filters.addEventListener("click", event => {
+            const button = event.target.closest("[data-filter]");
+            if (!button) return;
+            currentFilter = button.dataset.filter;
+            filters.querySelectorAll("[data-filter]").forEach(filter => {
+                filter.setAttribute("aria-pressed", String(filter === button));
+            });
+            render();
+        });
+
+        document.querySelector("#clear-completed").addEventListener("click", () => {
+            tasks = tasks.filter(task => !task.done);
+            saveTasks();
+            render();
+        });
+
+        document.querySelector("#today").textContent = new Intl.DateTimeFormat("id-ID", {
+            weekday: "long", day: "numeric", month: "long", year: "numeric"
+        }).format(new Date());
+
+        render();
+    </script>
 </body>
 </html>
