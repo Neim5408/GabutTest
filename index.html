@@ -159,7 +159,6 @@
             gap: 13px;
             min-height: 61px;
             border-bottom: 1px solid var(--line);
-            animation: appear 180ms ease-out both;
         }
 
         .task-toggle {
@@ -224,11 +223,6 @@
         }
 
         .clear-button:hover { color: var(--ink); }
-
-        @keyframes appear {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
 
         @media (max-width: 520px) {
             .page { width: min(100% - 28px, 760px); padding-top: 28px; }
@@ -387,5 +381,6 @@
 
         render();
     </script>
+    <script src="java.js"></script>
 </body>
 </html>
