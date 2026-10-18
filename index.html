@@ -115,6 +115,58 @@
         .add-button:hover { background: #cde95a; }
         .add-button:active { transform: scale(0.97); }
 
+        .focus-timer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-top: 20px;
+            padding: 14px 0;
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .focus-copy { min-width: 0; }
+        .focus-label { margin: 0 0 4px; font-size: 13px; font-weight: 700; }
+        .focus-status { color: var(--muted); font-size: 12px; }
+
+        .focus-time {
+            color: var(--accent-dark);
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 30px;
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+        }
+
+        .focus-actions { display: flex; align-items: center; gap: 7px; }
+
+        .focus-start {
+            min-height: 38px;
+            padding: 0 14px;
+            border: 0;
+            border-radius: 4px;
+            color: var(--white);
+            background: var(--accent-dark);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .focus-start:hover { background: #4c582b; }
+
+        .focus-reset {
+            width: 38px;
+            height: 38px;
+            border: 1px solid var(--line);
+            border-radius: 4px;
+            color: var(--muted);
+            background: transparent;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .focus-reset:hover { color: var(--ink); background: #e8e9df; }
+
         .list-heading {
             display: flex;
             align-items: center;
@@ -231,6 +283,10 @@
             .filters { margin-left: -8px; }
             .footer { align-items: flex-start; flex-direction: column; }
             .add-button { padding: 0 13px; }
+            .focus-timer { flex-wrap: wrap; }
+            .focus-copy { flex: 1 1 calc(100% - 100px); }
+            .focus-time { order: 1; margin-left: 2px; }
+            .focus-actions { order: 2; margin-left: auto; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -255,6 +311,18 @@
             <input id="task-input" type="text" maxlength="120" placeholder="Apa yang ingin kamu kerjakan?" aria-label="Tugas baru" autocomplete="off" required>
             <button class="add-button" type="submit">Tambah <span aria-hidden="true">+</span></button>
         </form>
+
+        <section class="focus-timer" aria-label="Timer fokus">
+            <div class="focus-copy">
+                <p class="focus-label">Fokus singkat</p>
+                <span class="focus-status" id="focus-status" aria-live="polite">Siap untuk fokus?</span>
+            </div>
+            <time class="focus-time" id="focus-time" aria-label="Sisa waktu">25:00</time>
+            <div class="focus-actions">
+                <button class="focus-start" id="focus-toggle" type="button">Mulai fokus</button>
+                <button class="focus-reset" id="focus-reset" type="button" aria-label="Reset timer" title="Reset timer">↻</button>
+            </div>
+        </section>
 
         <section aria-labelledby="list-title">
             <div class="list-heading">
@@ -382,5 +450,6 @@
         render();
     </script>
     <script src="java.js"></script>
+    <script src="java2.js"></script>
 </body>
 </html>
